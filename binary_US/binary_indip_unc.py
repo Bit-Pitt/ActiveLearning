@@ -1,0 +1,117 @@
+import numpy as np
+import pandas as pd
+
+
+
+#formula dell'entropia binaria, uso di numpy per il log
+#  Clip per evitare log(0) o log(1), che darebbero inf/nan. Si forza p ∈ [1e-10, 1 - 1e-10]
+# Numpy permette in AUTOMATICO di effettuare questa operazione per ogni cella della matrice
+def entropy(p):
+    p = np.clip(p, 1e-10, 1 - 1e-10)                    
+    return -p * np.log(p) - (1 - p) * np.log(1 - p)
+
+
+#Seleziona il sample più incerto in base alla media delle entropie.
+#  model.predict_proba()         
+#[   
+#    [  [p0,p1] , [0.2, 0.8], ...],  # label 1 → probabilità per ogni sample
+#    [[0.7, 0.3], [0.1, 0.9], ...],  # label 2
+#    [[0.5, 0.5], [0.3, 0.7], ...],  # label 3
+#   ...
+#]   1° sample ha p1 0.3 per la label2 e p0 0.5 per label 3 ...  
+def select_most_uncertain(model, X_pool):
+   
+    prob_per_label = model.predict_proba(X_pool)
+   
+    # Estrai solo la probabilità della classe positiva (label = 1) per ogni label , sono array di tipo numpy
+    # Risultato: una matrice (n_samples, n_labels)       [i,j] == prob che il sample i per la label j (p1)
+    positive_probs = np.array([label_probs[:, 1] for label_probs in prob_per_label]).T                    #.T traspone
+
+    sample_entropies = entropy(positive_probs)
+
+    # Calcola la media delle entropie per ogni sample (riga)
+    average_entropy_per_sample = sample_entropies.mean(axis=1)
+
+    # Trova l'indice del sample con la maggiore incertezza media
+    most_uncertain_index = np.argmax(average_entropy_per_sample)
+
+    print("Sample with Max entropy:", np.max(average_entropy_per_sample))
+    print("Mean entropy samples:", np.mean(average_entropy_per_sample))
+
+
+    return most_uncertain_index
+
+
+#Nota:  y_pool in contesto reale non si hanno, ma noi lo sfruttiamo solo per l'etichettatura automatica (senza rumore) 
+#  @algorithm: Ad ogni iterazione: 
+#   - calcolo l'incertezza e ottengo il sample con max incertezza, lo inserisco nel train set e lo tolgo dal pool , riaddestro il modello
+#  @return il modello finale e il nuovo train e pool set.
+def active_learning(model, X_train, y_train, X_pool, y_pool, iterations=100):
+
+    for i in range(iterations):
+        print(f"\n=== Iterazione {i+1}/{iterations} ===")
+
+        # Trova l'indice del sample più incerto
+        idx = select_most_uncertain(model,X_pool)
+
+        # Aggiungi il sample al train
+        X_train = pd.concat([X_train, X_pool.iloc[[idx]]])
+        y_train = pd.concat([y_train, y_pool.iloc[[idx]]])
+
+        # Rimuovi il sample dal pool
+        X_pool = X_pool.drop(X_pool.index[idx])
+        y_pool = y_pool.drop(y_pool.index[idx])
+
+        # Allena il modello sul train set corrente
+        model.fit(X_train, y_train)
+
+    return model, X_train, y_train, X_pool, y_pool
+
+
+
+
+
+
+
+
+
+#Questo è una piccola demo
+'''
+import numpy as np
+
+def entropy(p):
+    p = np.clip(p, 1e-10, 1 - 1e-10)                    
+    return -p * np.log(p) - (1 - p) * np.log(1 - p)
+            
+            #2 sample 3 etichette
+prob_per_label = np.array([   
+                [[0.1 ,0.9], [0.2, 0.8]],  
+                [[0.7, 0.3], [0.1, 0.9]],  
+                [[0.5, 0.5], [0.3, 0.7]],  
+    ] )
+    
+positive_probs = np.array([label_probs[:, 1] for label_probs in prob_per_label])
+
+print(positive_probs)
+print("\n")
+
+positive_probs = positive_probs.T #.T traspone
+
+print(positive_probs)
+print("\n")
+
+sample_entropies = entropy(positive_probs)
+
+print(sample_entropies)
+print("\n")
+
+
+average_entropy_per_sample = sample_entropies.mean(axis=1)
+
+print(average_entropy_per_sample)
+print("\n")
+
+most_uncertain_index = np.argmax(average_entropy_per_sample)
+print(most_uncertain_index)
+
+'''
