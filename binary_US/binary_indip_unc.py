@@ -38,9 +38,23 @@ def select_most_uncertain(model, X_pool):
     print("Sample with Max entropy:", np.max(average_entropy_per_sample))
     print("Mean entropy samples:", np.mean(average_entropy_per_sample))
 
-
     return most_uncertain_index
 
+#versione in cui selezioni k sample ad ogni iterazione
+def select_k_most_uncertain(model, X_pool, k=3):
+
+    prob_per_label = model.predict_proba(X_pool)
+    positive_probs = np.array([label_probs[:, 1] for label_probs in prob_per_label]).T  
+    sample_entropies = entropy(positive_probs)
+    average_entropy_per_sample = sample_entropies.mean(axis=1)
+
+    # Trova gli indici dei sample con maggiore incertezza (top-k)
+    top_k_indices = np.argsort(-average_entropy_per_sample)[:k]  # ordina decrescente
+
+    print("Top entropies:", average_entropy_per_sample[top_k_indices])
+    print("Mean entropy of pool:", np.mean(average_entropy_per_sample))
+
+    return top_k_indices
 
 #Nota:  y_pool in contesto reale non si hanno, ma noi lo sfruttiamo solo per l'etichettatura automatica (senza rumore) 
 #  @algorithm: Ad ogni iterazione: 
@@ -53,16 +67,32 @@ def active_learning(model, X_train, y_train, X_pool, y_pool, iterations=100):
 
         # Trova l'indice del sample più incerto
         idx = select_most_uncertain(model,X_pool)
-
-        # Aggiungi il sample al train
+        
         X_train = pd.concat([X_train, X_pool.iloc[[idx]]])
         y_train = pd.concat([y_train, y_pool.iloc[[idx]]])
 
-        # Rimuovi il sample dal pool
         X_pool = X_pool.drop(X_pool.index[idx])
         y_pool = y_pool.drop(y_pool.index[idx])
 
-        # Allena il modello sul train set corrente
+        model.fit(X_train, y_train)
+
+    return model, X_train, y_train, X_pool, y_pool
+
+
+#versione con selezione di k sample
+def active_learning(model, X_train, y_train, X_pool, y_pool, iterations=100, k=3):
+    for i in range(iterations):
+        print(f"\n=== Iterazione {i+1}/{iterations} ===")
+
+        indices = select_k_most_uncertain(model, X_pool, k)
+
+        X_train = pd.concat([X_train, X_pool.iloc[indices]])
+        y_train = pd.concat([y_train, y_pool.iloc[indices]])
+
+        X_pool = X_pool.drop(X_pool.index[indices])
+        y_pool = y_pool.drop(y_pool.index[indices])
+
+       
         model.fit(X_train, y_train)
 
     return model, X_train, y_train, X_pool, y_pool

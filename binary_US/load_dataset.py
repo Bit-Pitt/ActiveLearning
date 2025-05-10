@@ -54,10 +54,10 @@ def load_dataset(ds_name):
         
         return dtrain,X_train,y_train,X_pool,y_pool,X_test,y_test
     
-    if ds_name == "Pubmed_train.csv":
+    if ds_name == "Pubmed_train.csv" or ds_name == "Pubmed_train2.csv":
 
         path = os.path.abspath("dataset")
-        dtrain = pd.read_csv(os.path.join(path, "Pubmed_train.csv"))
+        dtrain = pd.read_csv(os.path.join(path, ds_name))
 
         rows, columns = dtrain.shape
         print(f"The dataset contains {rows} rows and {columns} columns")
@@ -87,9 +87,11 @@ def load_dataset(ds_name):
         y = dtrain[TARGET_COLS]
 
         # Split iniziale (piccolo training set + resto)
-        X_train, X_rest, y_train, y_rest = train_test_split(X, y, test_size=0.95, random_state=42, stratify=y.sum(axis=1))
+        X_train, X_rest, y_train, y_rest = train_test_split(X, y, test_size=0.99, random_state=42, stratify=y.sum(axis=1))
 
         # Split del resto in pool e test set
         X_pool, X_test, y_pool, y_test = train_test_split(X_rest, y_rest, test_size=0.10, random_state=42)
 
         return dtrain, X_train, y_train, X_pool, y_pool, X_test, y_test
+    
+    raise Exception("Dataset non trovato")
