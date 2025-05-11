@@ -7,6 +7,7 @@ from utils import *
 from models import *
 from evaluation import *
 
+#dim Train è grandezza del Train set in % sul dataset caricato
 def load_dataset(ds_name):
 
     if ds_name == "train.csv":
