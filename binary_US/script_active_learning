@@ -53,7 +53,8 @@ evaluation(model,X_test,y_test,False)
 
 #model.fit(X_train, y_train)  già fatto la prima volta sopra
 
-model, X_train, y_train, X_pool, y_pool = active_learning(model, X_train, y_train, X_pool, y_pool, 100,3)
+model, X_train, y_train, X_pool, y_pool = active_learning(model, X_train, y_train, X_pool, y_pool, 100)
+#model, X_train, y_train, X_pool, y_pool = active_learning(model, X_train, y_train, X_pool, y_pool, 100,3)        versione k sample 
 
 print(f"Controllo di consistenza == Train set: {len(X_train)} | Pool set: {len(X_pool)}")
 
