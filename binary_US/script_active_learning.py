@@ -15,9 +15,7 @@ from load_dataset import *
 
 
 tqdm.pandas()
-#nltk.download('stopwords')
-#nltk.download('punkt')
-#nltk.download('punkt_tab')
+
 
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=DeprecationWarning)
@@ -40,7 +38,7 @@ print(f"Pool set contains {len(X_pool)} samples")
                 # MODEL AND TRAINING
 
 #Scelta del modello 
-model = choose_model(0)
+model = choose_model(3)
 
 #training
 model.fit(X_train, y_train)
@@ -66,7 +64,7 @@ evaluation(model,X_test,y_test,False)
 
 
 # -------------------------------------------------- mostra grafici
-plt.show()
+#plt.show()
 
  
 
