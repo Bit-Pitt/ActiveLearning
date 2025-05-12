@@ -79,12 +79,15 @@ def active_learning(model, X_train, y_train, X_pool, y_pool, iterations=100):
     return model, X_train, y_train, X_pool, y_pool
 
 
-#versione con selezione di k sample
-def active_learning(model, X_train, y_train, X_pool, y_pool, iterations=100, k=3):
+#versione con selezione di k sample , e ebu
+def active_learning(model, X_train, y_train, X_pool, y_pool, iterations=100, k=3,ebu=False):
     for i in range(iterations):
         print(f"\n=== Iterazione {i+1}/{iterations} ===")
 
-        indices = select_k_most_uncertain(model, X_pool, k)
+        indices = select_k_most_uncertain(model, X_pool, k)   
+
+        if ebu:
+            pass
 
         X_train = pd.concat([X_train, X_pool.iloc[indices]])
         y_train = pd.concat([y_train, y_pool.iloc[indices]])

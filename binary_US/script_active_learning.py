@@ -38,7 +38,7 @@ print(f"Pool set contains {len(X_pool)} samples")
                 # MODEL AND TRAINING
 
 #Scelta del modello 
-model = choose_model(3)
+model = choose_model(2)
 
 #training
 model.fit(X_train, y_train)
@@ -47,14 +47,14 @@ model.fit(X_train, y_train)
 evaluation(model,X_test,y_test,False)
 
 #------------------------------------------------------------------------------------------------
-#           Training with con Active Learning
+#           Training with  Active Learning
 #------------------------------------------------------------------------------------------------
 
 
 #model.fit(X_train, y_train)          #fatto già sopra
 
 #model, X_train, y_train, X_pool, y_pool = active_learning(model, X_train, y_train, X_pool, y_pool, 100)
-model, X_train, y_train, X_pool, y_pool = active_learning(model, X_train, y_train, X_pool, y_pool, 100,3)        #versione k sample 
+model, X_train, y_train, X_pool, y_pool = active_learning(model, X_train, y_train, X_pool, y_pool, iterations=100,k=3)        
 
 print(f"Controllo di consistenza == Train set: {len(X_train)} | Pool set: {len(X_pool)}")
 
