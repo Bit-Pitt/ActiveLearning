@@ -45,7 +45,7 @@ def load_dataset(ds_name):
 
         #data splitting: splitto in  train set, test set, pool set
         #step 1: ottengo un piccolo train set
-        X_train, X_rest, y_train, y_rest = train_test_split(X, y, test_size=0.95)
+        X_train, X_rest, y_train, y_rest = train_test_split(X, y, test_size=0.99)
 
         # Step 2: Il resto è 90% pool  e 10% test
         X_pool, X_test, y_pool, y_test = train_test_split(X_rest, y_rest, test_size=0.10)

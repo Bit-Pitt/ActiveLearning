@@ -26,8 +26,6 @@ random.seed(SEED)
 np.random.seed(SEED)
 
 ds_name = "Pubmed_train2.csv"
-
-
 dtrain,X_train,y_train,X_pool,y_pool,X_test,y_test = load_dataset(ds_name)
 
 print(f"Train set contains {len(X_train)} samples")
@@ -54,11 +52,12 @@ evaluation(model,X_test,y_test,False)
 #model.fit(X_train, y_train)          #fatto già sopra
 
 #model, X_train, y_train, X_pool, y_pool = active_learning(model, X_train, y_train, X_pool, y_pool, 100)
-model, X_train, y_train, X_pool, y_pool = active_learning(model, X_train, y_train, X_pool, y_pool, iterations=100,k=3)        
+#model, X_train, y_train, X_pool, y_pool = active_learning(model, X_train, y_train, X_pool, y_pool, iterations=100,k=5)  
+model, X_train, y_train, X_pool, y_pool = active_learning(model, X_train, y_train, X_pool, y_pool, iterations=100,k=20,ebu=True)      
 
 print(f"Controllo di consistenza == Train set: {len(X_train)} | Pool set: {len(X_pool)}")
 
-# evaluation  dopo Active Learning (standard binary indipendence uncertainty with mean entropy)
+# evaluation  dopo Active Learning 
 evaluation(model,X_test,y_test,False)
 
 
