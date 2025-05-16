@@ -13,8 +13,8 @@ def selections(total_score,top_k_indices ,batch_size):
         selected = [top_k_indices[idx_min], top_k_indices[idx_max]]
     else:       #DEMO SOTTO
         sorted_indices = np.argsort(total_score)
-        lowest = []
-        highest = []
+        lowest = np.array([], dtype=int)
+        highest = np.array([], dtype=int)
 
         lowest = sorted_indices[:batch_size]        # mancaza di evidenza
         #highest = sorted_indices[-batch_size:]      # I più "conflittuali" (alta evidenza)

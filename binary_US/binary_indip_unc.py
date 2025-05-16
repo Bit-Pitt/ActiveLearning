@@ -100,7 +100,7 @@ def active_learning(model, X_train, y_train, X_pool, y_pool, iterations=100, k=3
         X_pool = X_pool.drop(X_pool.index[indices])
         y_pool = y_pool.drop(y_pool.index[indices])
 
-       
+        print("Sto ritrainando il modello")
         model.fit(X_train, y_train)
 
     return model, X_train, y_train, X_pool, y_pool
