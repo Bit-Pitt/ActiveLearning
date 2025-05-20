@@ -87,6 +87,9 @@ def load_dataset(ds_name):
         X = dtrain['PROCESSED_TEXT']
         y = dtrain[TARGET_COLS]
 
+        #Stampa di occorrenza delle label nel data set
+        print(y.sum(axis=0))
+
         # Split iniziale (piccolo training set + resto)
         X_train, X_rest, y_train, y_rest = train_test_split(X, y, test_size=0.99, random_state=42, stratify=y.sum(axis=1))
 

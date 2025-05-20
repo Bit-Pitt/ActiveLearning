@@ -25,8 +25,8 @@ def select_most_uncertain(model, X_pool):
     prob_per_label = model.predict_proba(X_pool)
    
     # Estrai solo la probabilità della classe positiva (label = 1) per ogni label , sono array di tipo numpy
-    # Risultato: una matrice (n_samples, n_labels)       [i,j] == prob che il sample i per la label j (p1)
-    positive_probs = np.array([label_probs[:, 1] for label_probs in prob_per_label]).T                    #.T traspone
+    # Risultato: una matrice (n_samples, n_labels)       [i,j] == prob positiva del sample i per la label j (p1)
+    positive_probs = np.array([label_probs[:, 1] for label_probs in prob_per_label]).T                    #.T traspone!
 
     sample_entropies = entropy(positive_probs)
 
@@ -92,7 +92,6 @@ def active_learning(model, X_train, y_train, X_pool, y_pool, iterations=100, k=3
         if ebu:
             X_pool_bin = (model.named_steps['vectorizer'].transform(X_pool) > 0.01).astype(float).toarray()   #trasformi il pool in binario (x=x1,x2,x3...)
             indices = select_by_ebu_multilabel(model, X_pool, X_pool_bin, indices, batch_size=5)
-
 
         X_train = pd.concat([X_train, X_pool.iloc[indices]])
         y_train = pd.concat([y_train, y_pool.iloc[indices]])

@@ -37,7 +37,7 @@ def select_by_ebu_multilabel(model, X_pool, X_pool_bin, top_k_indices, batch_siz
     for label_idx in range(n_labels):
     #Applichiamo la Ebu come da paper
         y_label = y_pred[:, label_idx]              # estrae (vettore colonna) quindi predizioni sono di quella label
-        pos_mask = y_label == 1                     #Es:  [0,0,1,0,1] ==> [false false true false true]
+        pos_mask = y_label == 1                     #Es:  [0,0,1,0,1] ==> [false false true false true] (divisione dei sample)
         neg_mask = y_label == 0
 
         #p(x^m | 1) =  num_sample (classificati come 1) che hanno la feature  / totali sample classificati 1,     demo sotto
@@ -51,7 +51,7 @@ def select_by_ebu_multilabel(model, X_pool, X_pool_bin, top_k_indices, batch_siz
         E1_mask = p_ratio > 1
         E0_mask = inv_ratio > 1
 
-        # Prendiamo solo le feature attive (== 1) e in evidenza
+        # Prendiamo solo le feature attive (True in Ex_mask) e le diamo il rateo
         E1_vals = np.where(E1_mask, p_ratio, 1.0)
         E0_vals = np.where(E0_mask, inv_ratio, 1.0)
 
