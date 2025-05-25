@@ -21,13 +21,13 @@ sns.set_theme(style="darkgrid", palette="pastel")
 
 
 
-SEED = 14
-random.seed(SEED)
+SEED = 48
+random.seed(SEED) 
 np.random.seed(SEED)
 
 ds_name = "Pubmed_train2.csv"
 ds,TARGET_COLS = load_dataset(ds_name)
-dtrain,X_train,y_train,X_pool,y_pool,X_test,y_test = ds_split(ds,500,TARGET_COLS)
+dtrain,X_train,y_train,X_pool,y_pool,X_test,y_test = ds_split(ds,500,TARGET_COLS,SEED)
 
 print(f"Train set contains {len(X_train)} samples")
 print(f"Test set contains {len(X_test)} samples")
@@ -37,7 +37,7 @@ print(f"Pool set contains {len(X_pool)} samples")
                 # MODEL AND TRAINING
 
 #Scelta del modello 
-model = choose_model(2)
+model = choose_model(2,SEED)
 
 #training
 model.fit(X_train, y_train)

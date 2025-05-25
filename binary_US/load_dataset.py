@@ -97,8 +97,8 @@ def load_dataset(ds_name):
     raise Exception("Dataset non trovato")
 
 
-def ds_split(ds,size_train,TARGET_COLS):
-    print(f"\nFunzione implementata attualmente solo per ds:pubmed2")
+def ds_split(ds,size_train,TARGET_COLS,seed):
+    print(f"\n'ds_split' è implementata attualmente solo per ds:pubmed2")
     if size_train == 500:
         test_size = 0.99
     elif size_train == 3000:
@@ -113,7 +113,7 @@ def ds_split(ds,size_train,TARGET_COLS):
     X = ds['PROCESSED_TEXT']
     y = ds[TARGET_COLS]
 
-    X_train, X_rest, y_train, y_rest = train_test_split(X, y, test_size=test_size, random_state=42, stratify=y.sum(axis=1))
-    X_pool, X_test, y_pool, y_test = train_test_split(X_rest, y_rest, test_size=0.10, random_state=42)
+    X_train, X_rest, y_train, y_rest = train_test_split(X, y, test_size=test_size, random_state=seed, stratify=y.sum(axis=1))
+    X_pool, X_test, y_pool, y_test = train_test_split(X_rest, y_rest, random_state=seed, test_size=0.10 )
 
     return ds, X_train, y_train, X_pool, y_pool, X_test, y_test

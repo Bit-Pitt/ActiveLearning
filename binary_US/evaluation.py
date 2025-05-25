@@ -15,11 +15,12 @@ def evaluation(model,X_test,y_test,ifplot):
     y_pred = model.predict(X_test)
     y_pred = pd.DataFrame(y_pred, columns=y_test.columns)
 
+   
     metrics = {
-        "accuracy" : accuracy_score,
-        "precision" : precision_score,
-        "recall" : recall_score,
-        "f1_macro" : partial(f1_score, average="macro"),
+    "accuracy": accuracy_score,
+    "precision": partial(precision_score, zero_division=0),
+    "recall": partial(recall_score, zero_division=0),
+    "f1_macro": partial(f1_score, average="macro", zero_division=0),
     }
 
     moc_results = evaluate_label_wise(y_test, y_pred, metrics)

@@ -7,7 +7,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 
 
-def choose_model(index):
+def choose_model(index,seed=42):
     model_found = False
     model = []
 
@@ -41,7 +41,7 @@ def choose_model(index):
                 estimator=RandomForestClassifier(
                     n_estimators=100,
                     max_depth=None,
-                    random_state=42
+                    random_state=seed
                 )
             ))
         ])
@@ -56,7 +56,7 @@ def choose_model(index):
                     n_estimators=100,
                     learning_rate=0.1,
                     max_depth=3,
-                    random_state=42
+                    random_state=seed
                 )
             ))
         ])
