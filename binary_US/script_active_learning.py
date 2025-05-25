@@ -21,7 +21,7 @@ sns.set_theme(style="darkgrid", palette="pastel")
 
 
 
-SEED = 48
+SEED = 21
 random.seed(SEED) 
 np.random.seed(SEED)
 
