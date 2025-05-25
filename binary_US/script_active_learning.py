@@ -1,3 +1,4 @@
+#Questo script serve per test veloci
 import warnings
 from sklearn.model_selection import train_test_split
 import pandas as pd
@@ -14,19 +15,19 @@ from load_dataset import *
 
 
 tqdm.pandas()
-
-
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 sns.set_theme(style="darkgrid", palette="pastel")
 
-SEED = 42
+
+
+SEED = 14
 random.seed(SEED)
 np.random.seed(SEED)
 
 ds_name = "Pubmed_train2.csv"
-ds_name = "train.csv"
-dtrain,X_train,y_train,X_pool,y_pool,X_test,y_test = load_dataset(ds_name)
+ds,TARGET_COLS = load_dataset(ds_name)
+dtrain,X_train,y_train,X_pool,y_pool,X_test,y_test = ds_split(ds,500,TARGET_COLS)
 
 print(f"Train set contains {len(X_train)} samples")
 print(f"Test set contains {len(X_test)} samples")
@@ -52,8 +53,8 @@ evaluation(model,X_test,y_test,False)
 #model.fit(X_train, y_train)          #fatto già sopra
 
 #model, X_train, y_train, X_pool, y_pool = active_learning(model, X_train, y_train, X_pool, y_pool, 100)
-#model, X_train, y_train, X_pool, y_pool = active_learning(model, X_train, y_train, X_pool, y_pool, iterations=10,k=50)  
-model, X_train, y_train, X_pool, y_pool = active_learning(model, X_train, y_train, X_pool, y_pool, iterations=100,k=30,ebu=True)      
+model, X_train, y_train, X_pool, y_pool = active_learning(model, X_train, y_train, X_pool, y_pool, iterations=10,k=50)  
+#model, X_train, y_train, X_pool, y_pool = active_learning(model, X_train, y_train, X_pool, y_pool, iterations=100,k=30,ebu=True)      
 
 print(f"\nControllo di consistenza == Train set: {len(X_train)} | Pool set: {len(X_pool)}")
 
@@ -66,7 +67,6 @@ evaluation(model,X_test,y_test,False)
 #plt.show()
 
  
-
 
 
 

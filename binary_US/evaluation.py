@@ -37,4 +37,6 @@ def evaluation(model,X_test,y_test,ifplot):
     if ifplot:
         plot_results(moc_results)
         plot_confusion_matrices(y_test, y_pred)
+        
+    return moc_results
     

@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from ebu import *
+import numpy as np
 
 
 
@@ -62,7 +63,7 @@ def select_k_most_uncertain(model, X_pool, k=3):
 #   - calcolo l'incertezza e ottengo il sample con max incertezza, lo inserisco nel train set e lo tolgo dal pool , riaddestro il modello
 #  @return il modello finale e il nuovo train e pool set.
 def active_learning(model, X_train, y_train, X_pool, y_pool, iterations=100):
-
+    model.fit(X_train, y_train)
     for i in range(iterations):
         print(f"\n=== Iterazione {i+1}/{iterations} ===")
 
@@ -84,6 +85,7 @@ def active_learning(model, X_train, y_train, X_pool, y_pool, iterations=100):
 #  model.named_steps['vectorizer'] per ottenere il TfidfVectorizer (del primo passo), .transform(X_pool) trasforma il testo in valori reali (tf*idf)
 # > 0.01 fa si che se il valore è maggiore allora "True" .. , infine astype(float) converte True in 1.0 e falso 0.0 ==> la matrice è pronta all'ebu   (esempio nella documentazione)
 def active_learning(model, X_train, y_train, X_pool, y_pool, iterations=100, k=3,ebu=False):
+    model.fit(X_train, y_train)
     for i in range(iterations):
         print(f"\n=== Iterazione {i+1}/{iterations} ===")
 
@@ -100,6 +102,32 @@ def active_learning(model, X_train, y_train, X_pool, y_pool, iterations=100, k=3
         y_pool = y_pool.drop(y_pool.index[indices])
 
         print("Sto ritrainando il modello")
+        model.fit(X_train, y_train)
+
+    return model, X_train, y_train, X_pool, y_pool
+
+    
+
+def random_select(X_pool, k):
+    return np.random.choice(len(X_pool), size=k, replace=False)
+
+
+
+#Versione selezione random
+def random_active_learning(model, X_train, y_train, X_pool, y_pool, iterations=10,k=50):
+    model.fit(X_train, y_train)
+    for i in range(iterations):
+        print(f"\n=== Iterazione {i+1}/{iterations} ===")
+
+        indices = random_select(model, X_pool, k)   
+        print(f"Indici random:{indices}")
+
+        X_train = pd.concat([X_train, X_pool.iloc[indices]])
+        y_train = pd.concat([y_train, y_pool.iloc[indices]])
+
+        X_pool = X_pool.drop(X_pool.index[indices])
+        y_pool = y_pool.drop(y_pool.index[indices])
+
         model.fit(X_train, y_train)
 
     return model, X_train, y_train, X_pool, y_pool

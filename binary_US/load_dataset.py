@@ -7,6 +7,8 @@ from utils import *
 from models import *
 from evaluation import *
 
+
+
 #dim Train è grandezza del Train set in % sul dataset caricato
 def load_dataset(ds_name):
 
@@ -42,7 +44,7 @@ def load_dataset(ds_name):
         # splitto le colonne di "input" con le label
         X = dtrain['PROCESSED_TEXT']
         y = dtrain[TARGET_COLS]    
-
+        '''
         #data splitting: splitto in  train set, test set, pool set
         #step 1: ottengo un piccolo train set
         X_train, X_rest, y_train, y_rest = train_test_split(X, y, test_size=0.99)
@@ -52,8 +54,8 @@ def load_dataset(ds_name):
 
         #rimpicciolisco ulteriormente il train       (il classificatore impara troppo bene già con pochi  esempi (tipo 200))
         #X_train, _, y_train, __ = train_test_split(X_train, y_train, test_size=0.20)
-        
-        return dtrain,X_train,y_train,X_pool,y_pool,X_test,y_test
+        '''
+        return dtrain,TARGET_COLS
     
     if ds_name == "Pubmed_train.csv" or ds_name == "Pubmed_train2.csv":
 
@@ -89,13 +91,29 @@ def load_dataset(ds_name):
 
         #Stampa di occorrenza delle label nel data set
         print(y.sum(axis=0))
-
-        # Split iniziale (piccolo training set + resto)
-        X_train, X_rest, y_train, y_rest = train_test_split(X, y, test_size=0.99, random_state=42, stratify=y.sum(axis=1))
-
-        # Split del resto in pool e test set
-        X_pool, X_test, y_pool, y_test = train_test_split(X_rest, y_rest, test_size=0.10, random_state=42)
-
-        return dtrain, X_train, y_train, X_pool, y_pool, X_test, y_test
+       
+        return dtrain,TARGET_COLS
     
     raise Exception("Dataset non trovato")
+
+
+def ds_split(ds,size_train,TARGET_COLS):
+    print(f"\nFunzione implementata attualmente solo per ds:pubmed2")
+    if size_train == 500:
+        test_size = 0.99
+    elif size_train == 3000:
+        test_size = 0.94
+    elif size_train == 10000:
+        test_size = 0.80
+    elif size_train == 25000:
+        test_size = 0.65
+    else:
+        raise ValueError("Parameter size_train not in [500, 3000, 10000, 25000]")
+
+    X = ds['PROCESSED_TEXT']
+    y = ds[TARGET_COLS]
+
+    X_train, X_rest, y_train, y_rest = train_test_split(X, y, test_size=test_size, random_state=42, stratify=y.sum(axis=1))
+    X_pool, X_test, y_pool, y_test = train_test_split(X_rest, y_rest, test_size=0.10, random_state=42)
+
+    return ds, X_train, y_train, X_pool, y_pool, X_test, y_test
