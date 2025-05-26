@@ -14,7 +14,7 @@ path_results = os.path.abspath("results")
 ds_name = "Pubmed_train2.csv"
 ds,TARGET_COLS = load_dataset(ds_name)
 #methods = ['standard', 'randomAL', 'entropyAL_10it', 'entropyAL_50it', 'ebuAL_10it']
-seeds = [48, 4, 74, 58, 84, 19, 91, 33]
+seeds = [4, 74, 58, 84, 19, 91, 33]
 train_sizes = [500, 2000, 10000, 25000]
 
 

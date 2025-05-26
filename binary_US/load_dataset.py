@@ -101,7 +101,7 @@ def ds_split(ds,size_train,TARGET_COLS,seed):
     print(f"\n'ds_split' è implementata attualmente solo per ds:pubmed2")
     if size_train == 500:
         test_size = 0.99
-    elif size_train == 3000:
+    elif size_train == 2000:
         test_size = 0.94
     elif size_train == 10000:
         test_size = 0.80
