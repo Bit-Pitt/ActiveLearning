@@ -7,13 +7,13 @@ import matplotlib.pyplot as plt
 
 path = os.path.abspath("results")
 #methods = ['standard', 'randomAL', 'entropyAL_10it', 'entropyAL_50it', 'ebuAL_10it']
-methods = ['standard'] 
+methods = ['standard','randomAL'] 
 all_data = []
 
 #Carichiamo tutti i risultati in all_data
 for method in methods:
-    path = os.path.join(path, method) 
-    with open(path, "r") as f:
+    path_method = os.path.join(path, f"{method}.json") 
+    with open(path_method, "r") as f:
         raw = json.load(f)
         for entry in raw:
             entry_flat = {                        #Il dizionario metriche viene espanso
@@ -40,5 +40,3 @@ for metric in ["accuracy", "precision", "recall","f1_macro"]:
     plt.grid(True)
     plt.tight_layout()
     plt.show()
-
-
