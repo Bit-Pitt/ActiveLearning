@@ -10,7 +10,7 @@ from tqdm.auto import tqdm
 
 #Setup
 tqdm.pandas()
-path_results = os.path.abspath("results")
+path_results = os.path.abspath("results_combined")
 ds_name = "Pubmed_train2.csv"
 ds,TARGET_COLS = load_dataset(ds_name)
 #methods = ['standard', 'randomAL', 'entropyAL_10it', 'entropyAL_50it', 'ebuAL_10it']
@@ -19,7 +19,10 @@ train_sizes = [500, 2000, 10000, 25000]
 
 
 
-methods = ['standard']
+methods = ['ebuAL_10it']
+seeds = [4,74]
+train_sizes = [10000]
+
 
 
 results = {method: [] for method in methods}
@@ -56,8 +59,10 @@ for method in methods:
                 model = res[0] 
 
             elif method == 'ebuAL_10it':
-                sample_per_iter = total_samples_to_add // 10
+                sample_per_iter = total_samples_to_add // 10               
                 res = active_learning(model, X_train, y_train, X_pool, y_pool, iterations=10, k=sample_per_iter*3, k_ebu=sample_per_iter, ebu=True)
+              
+                    
                 model = res[0] 
 
 
