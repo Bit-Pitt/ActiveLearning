@@ -7,6 +7,7 @@ import contractions
 from sklearn.metrics import confusion_matrix
 
 
+
 class Processor:
 
     def __init__(self):
@@ -97,3 +98,4 @@ def plot_cooccurrence_matrix(y : pd.DataFrame) -> None:
     X = y.T @ y
     X = X / X.sum(axis=1)
     sns.heatmap(X, annot=True, fmt=".2f", cmap="Blues", xticklabels=y.columns, yticklabels=y.columns)
+

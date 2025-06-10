@@ -10,7 +10,7 @@ from evaluation import *
 
 
 #dim Train è grandezza del Train set in % sul dataset caricato
-def load_dataset(ds_name):
+def carica_ds(ds_name):
 
     if ds_name == "train.csv":
         path = os.path.abspath("dataset")
@@ -101,6 +101,8 @@ def ds_split(ds,size_train,TARGET_COLS,seed):
     print(f"\n'ds_split' è implementata attualmente solo per ds:pubmed2")
     if size_train == 500:
         test_size = 0.99
+    elif size_train == 1000:
+        test_size = 0.98
     elif size_train == 2000:
         test_size = 0.94
     elif size_train == 10000:
@@ -108,7 +110,7 @@ def ds_split(ds,size_train,TARGET_COLS,seed):
     elif size_train == 25000:
         test_size = 0.65
     else:
-        raise ValueError("Parameter size_train not in [500, 3000, 10000, 25000]")
+        raise ValueError("Parameter size_train not in [500, 1000, 3000, 10000, 25000]")
 
     X = ds['PROCESSED_TEXT']
     y = ds[TARGET_COLS]

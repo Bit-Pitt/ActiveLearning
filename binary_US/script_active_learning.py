@@ -1,7 +1,5 @@
 #Questo script serve per test veloci
 import warnings
-from sklearn.model_selection import train_test_split
-import pandas as pd
 import numpy as np
 import seaborn as sns
 import random
@@ -26,7 +24,7 @@ random.seed(SEED)
 np.random.seed(SEED)
 
 ds_name = "Pubmed_train2.csv"
-ds,TARGET_COLS = load_dataset(ds_name)
+ds,TARGET_COLS = carica_ds(ds_name)
 dtrain,X_train,y_train,X_pool,y_pool,X_test,y_test = ds_split(ds,500,TARGET_COLS,SEED)
 
 print(f"Train set contains {len(X_train)} samples")

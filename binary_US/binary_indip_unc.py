@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from ebu import *
 import numpy as np
+from evaluation import log_metrics_callback
 
 
 
@@ -84,7 +85,7 @@ def active_learning(model, X_train, y_train, X_pool, y_pool, iterations=100):
 #versione con selezione di k sample , e ebu
 #  model.named_steps['vectorizer'] per ottenere il TfidfVectorizer (del primo passo), .transform(X_pool) trasforma il testo in valori reali (tf*idf)
 # > 0.01 fa si che se il valore è maggiore allora "True" .. , infine astype(float) converte True in 1.0 e falso 0.0 ==> la matrice è pronta all'ebu   (esempio nella documentazione)
-def active_learning(model, X_train, y_train, X_pool, y_pool, iterations=100, k=3,k_ebu = 10,ebu=False):
+def active_learning(model, X_train, y_train, X_pool, y_pool, iterations=100, k=3,k_ebu = 10,ebu=False,X_test = None,y_test = None):
     model.fit(X_train, y_train)
     for i in range(iterations):
         print(f"\n=== Iterazione {i+1}/{iterations} ===")
@@ -92,8 +93,8 @@ def active_learning(model, X_train, y_train, X_pool, y_pool, iterations=100, k=3
         indices = select_k_most_uncertain(model, X_pool, k)   
 
         if ebu:
-            X_pool_bin = (model.named_steps['vectorizer'].transform(X_pool) > 0.01).astype(float).toarray()   #trasformi il pool in binario (x=x1,x2,x3...)
-            indices = select_by_ebu_multilabel(model, X_pool, X_pool_bin, indices, batch_size=k_ebu)
+            X_pool_bin = (model.named_steps['vectorizer'].transform(X_pool) > 0.01).astype(float)   #trasformi il pool in binario (x=x1,x2,x3...)
+            indices = select_by_ebu_multilabel_opt(model, X_pool, X_pool_bin, indices, batch_size=k_ebu)
 
         X_train = pd.concat([X_train, X_pool.iloc[indices]])
         y_train = pd.concat([y_train, y_pool.iloc[indices]])
@@ -102,7 +103,15 @@ def active_learning(model, X_train, y_train, X_pool, y_pool, iterations=100, k=3
         y_pool = y_pool.drop(y_pool.index[indices])
 
         print("Sto ritrainando il modello")
+        print(f"Dimensione del train: {len(X_train)}")
         model.fit(X_train, y_train)
+         
+        #evaluation ad ogni iterazione + scrittura su file
+        if X_test is not None and y_test is not None:
+            if ebu:
+                log_metrics_callback(model,X_test,y_test,"ebuAL",i+1)
+            else:
+                log_metrics_callback(model,X_test,y_test,"entropyAL",i+1)
 
     return model, X_train, y_train, X_pool, y_pool
 
@@ -114,7 +123,7 @@ def random_select(X_pool, k):
 
 
 #Versione selezione random
-def random_active_learning(model, X_train, y_train, X_pool, y_pool, iterations=10,k=50):
+def random_active_learning(model, X_train, y_train, X_pool, y_pool, iterations=10,k=50,X_test = None,y_test = None):
     model.fit(X_train, y_train)
     for i in range(iterations):
         print(f"\n=== Iterazione {i+1}/{iterations} ===")
@@ -129,6 +138,10 @@ def random_active_learning(model, X_train, y_train, X_pool, y_pool, iterations=1
         y_pool = y_pool.drop(y_pool.index[indices])
 
         model.fit(X_train, y_train)
+
+        #evaluation ad ogni iterazione + scrittura su file
+        if X_test is not None and y_test is not None:
+            log_metrics_callback(model,X_test,y_test,"randomAL",i+1)
 
     return model, X_train, y_train, X_pool, y_pool
 
